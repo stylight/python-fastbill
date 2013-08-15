@@ -1,47 +1,77 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from tornado.escape import json_encode, json_decode
-from tornado.httpclient import AsyncHTTPClient, HTTPRequest
+import requests
+import json
+
+__version__ = '0.1b'
+__author__ = 'Dimitar Roustchev'
+
+
+def _enum(**enums):
+    return type('Enum', (), enums)
+
+CustomerType = _enum(BUSINESS='business', CONSUMER='consumer')
+CountryCode = _enum(DE='de', AT='at', CH='ch')
+Salutation = _enum(MR='mr', MRS='mrs', FAM='familiy', EMPTY='')
+CurrencyCode = _enum(EUR='EUR', CHF='CHF', GBP='GBP', USD='USD')
+PaymentType = _enum(TRANSFER=1,
+                    DEBIT=2,
+                    CASH=3,
+                    PAYPAL=4,
+                    PREPAYMENT=5,
+                    CREDITCARD=6)
+PaymentNotice = _enum(YES=1, NO=0)
+
+
+class FastbillException(Exception):
+    def __init__(self, result):
+        self.result = result
+
+
+class InsufficientParams(FastbillException):
+    pass
 
 
 class FastbillAPI(object):
     API_ENDPOINT = "https://automatic.fastbill.com/api/1.0/api.php"
 
+    ENDPOINTS = ['CUSTOMERS', 'SUBSCRIPTIONS', 'INVOICES', 'TEMPLATES']
+
     def __init__(self, email, api_key):
-        self.email = email
-        self.api_key = api_key
-        self.client = AsyncHTTPClient()
+        self.auth = (email, api_key)
         self.headers = {'Content-Type': 'application/json'}
 
-    def _make_request(self, method, **kw):
-        request = HTTPRequest(
-            url=self.API_ENDPOINT,
-            method='POST',
-            headers=self.headers,
-            auth_username=self.email,
-            auth_password=self.api_key,
-            body=json_encode({
-                'service': method,
-            })
-        )
-        return request
+    def __getattr__(self, name):
+        endpoint = '.'.join(name.split("_"))
 
-    def _call(self, method, on_success, on_fail, **kw):
-        def callback_wrapper(response):
-            if response.error:
-                return on_fail(response)
+        def func(**kw):
+            if hasattr(self, '_' + endpoint):
+                pass
+            result = self._request(endpoint, **kw)
+            # post check
+            for ep in self.ENDPOINTS:
+                if ep in result:
+                    return result[ep]
+            return result
+        return func
 
-            json = json_decode(response.body)
-            if json['response.status'] == 'error':
-                return on_fail(response)
+    def _request(self, method, **kw):
+        payload = {'service': method,
+                   'limit': kw.get('limit'),
+                   'offset': kw.get('offset'),
+                   'filter': kw.get('filter'),
+                   'data': kw.get('data'),
+                   }
 
-            return on_success(response)
+        r = requests.post(self.API_ENDPOINT,
+                          auth=self.auth,
+                          headers=self.headers,
+                          data=json.dumps(payload))
 
-        request = self._make_request(method, **kw)
+        print r.request.body
 
-        self.client.fetch(request, callback_wrapper)
-
-    def customers(self, on_success, on_fail):
-        return self._call('customer.get', on_success, on_fail)
-
+        if r.status_code != 200:
+            raise FastbillException()
+        else:
+            return r.json().get('RESPONSE')
