@@ -4,7 +4,7 @@
 import requests
 import json
 
-__version__ = '0.1b'
+__version__ = '0.1'
 __author__ = 'Dimitar Roustchev'
 
 
@@ -25,8 +25,7 @@ PaymentNotice = _enum(YES=1, NO=0)
 
 
 class FastbillException(Exception):
-    def __init__(self, result):
-        self.result = result
+    pass
 
 
 class InsufficientParams(FastbillException):
@@ -69,9 +68,10 @@ class FastbillAPI(object):
                           headers=self.headers,
                           data=json.dumps(payload))
 
-        print r.request.body
-
         if r.status_code != 200:
-            raise FastbillException()
+            raise FastbillException(str(r.status_code) + ' ' + str(r.reason))
         else:
+            response = r.json().get('RESPONSE')
+            if response.get('ERRORS'):
+                raise FastbillException(response.get('ERRORS')[0])
             return r.json().get('RESPONSE')
