@@ -4,7 +4,7 @@
 import requests
 import json
 
-__version__ = '0.1'
+__version__ = '0.1.1'
 __author__ = 'Dimitar Roustchev'
 
 
@@ -33,11 +33,11 @@ class InsufficientParams(FastbillException):
 
 
 class FastbillAPI(object):
-    API_ENDPOINT = "https://automatic.fastbill.com/api/1.0/api.php"
 
     ENDPOINTS = ['CUSTOMERS', 'SUBSCRIPTIONS', 'INVOICES', 'TEMPLATES']
 
-    def __init__(self, email, api_key):
+    def __init__(self, api_endpoint, email, api_key):
+        self.api_endpoint = api_endpoint
         self.auth = (email, api_key)
         self.headers = {'Content-Type': 'application/json'}
 
@@ -63,7 +63,7 @@ class FastbillAPI(object):
                    'data': kw.get('data'),
                    }
 
-        r = requests.post(self.API_ENDPOINT,
+        r = requests.post(self.api_endpoint,
                           auth=self.auth,
                           headers=self.headers,
                           data=json.dumps(payload))
