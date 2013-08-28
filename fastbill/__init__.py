@@ -4,7 +4,7 @@
 import requests
 import json
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 __author__ = 'Dimitar Roustchev'
 
 
@@ -71,7 +71,7 @@ class FastbillAPI(object):
         if r.status_code != 200:
             raise FastbillException(str(r.status_code) + ' ' + str(r.reason))
         else:
-            response = r.json().get('RESPONSE')
+            response = r.json.get('RESPONSE')
             if response.get('ERRORS'):
                 raise FastbillException(response.get('ERRORS')[0])
-            return r.json().get('RESPONSE')
+            return r.json.get('RESPONSE')

@@ -9,17 +9,21 @@ version = str(fastbill.__version__)
 setup(
     name='fastbill',
     version=version,
+    description='A thin python wrapper for the fastbill API',
+    #TODO: write README.txt
+    #long_description=open('./README.txt', 'r').read(),
     author='Dimitar Roustchev',
     author_email='dimitar.roustchev@stylight.com',
     url='http://github.com/stylight/stylight-fastbill',
-    description='python wrapper for Fastbill',
-    #TODO: write README.txt
-    #long_description=open('./README.txt', 'r').read(),
-    packages=find_packages(),
-    install_requires=[
-        'requests>=1.2.3'
-    ],
     #TODO: Verify license
     license='MIT License',
+    packages=find_packages(),
+    install_requires=[
+        'requests==0.14.2',
+        'fudge==1.0.3'
+    ],
+    test_requires=[
+        'nose==1.3.0'
+    ],
     keywords='fastbill api'
 )
