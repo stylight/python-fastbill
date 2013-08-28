@@ -19,8 +19,7 @@ setup(
     license='MIT License',
     packages=find_packages(),
     install_requires=[
-        'requests==0.14.2',
-        'fudge==1.0.3'
+        'requests==0.14.2'
     ],
     test_requires=[
         'nose==1.3.0'
