@@ -8,33 +8,24 @@ __version__ = '0.1.2'
 __author__ = 'Dimitar Roustchev'
 
 
-def _enum(**enums):
-    return type('Enum', (), enums)
-
-CustomerType = _enum(BUSINESS='business', CONSUMER='consumer')
-CountryCode = _enum(DE='de', AT='at', CH='ch')
-Salutation = _enum(MR='mr', MRS='mrs', FAM='familiy', EMPTY='')
-CurrencyCode = _enum(EUR='EUR', CHF='CHF', GBP='GBP', USD='USD')
-PaymentType = _enum(TRANSFER=1,
-                    DEBIT=2,
-                    CASH=3,
-                    PAYPAL=4,
-                    PREPAYMENT=5,
-                    CREDITCARD=6)
-PaymentNotice = _enum(YES=1, NO=0)
-
-
 class FastbillException(Exception):
     pass
 
 
-class InsufficientParams(FastbillException):
-    pass
+class FastbillResponse(dict):
+    ENDPOINTS = ['CUSTOMERS', 'SUBSCRIPTIONS', 'INVOICES', 'TEMPLATES']
+
+    def __iter__(self):
+        # If we iterate over the result we just want the values
+        # and not the stuff we got sent alongside.
+        for ep in self.ENDPOINTS:
+            if ep in self.keys():
+                return iter(self[ep])
+        else:
+            return iter([])
 
 
 class FastbillAPI(object):
-
-    ENDPOINTS = ['CUSTOMERS', 'SUBSCRIPTIONS', 'INVOICES', 'TEMPLATES']
 
     def __init__(self, api_endpoint, email, api_key):
         self.api_endpoint = api_endpoint
@@ -42,26 +33,22 @@ class FastbillAPI(object):
         self.headers = {'Content-Type': 'application/json'}
 
     def __getattr__(self, name):
-        endpoint = '.'.join(name.split("_"))
+        endpoint = name.replace("_", ".")
 
         def func(**kw):
-            if hasattr(self, '_' + endpoint):
-                pass
-            result = self._request(endpoint, **kw)
-            # post check
-            for ep in self.ENDPOINTS:
-                if ep in result:
-                    return result[ep]
-            return result
+            return self._request(endpoint, **kw)
         return func
 
     def _request(self, method, **kw):
-        payload = {'service': method,
-                   'limit': kw.get('limit'),
-                   'offset': kw.get('offset'),
-                   'filter': kw.get('filter'),
-                   'data': kw.get('data'),
-                   }
+        payload = {
+            'service': method,
+        }
+        for key in ['limit', 'offset', 'filter', 'data']:
+            payload[key] = kw.pop(key, None)
+
+        if kw:
+            raise FastbillException("Unknown arguments: %s" %
+                                    ", ".join(kw.keys()))
 
         r = requests.post(self.api_endpoint,
                           auth=self.auth,
@@ -73,5 +60,5 @@ class FastbillAPI(object):
         else:
             response = r.json.get('RESPONSE')
             if response.get('ERRORS'):
-                raise FastbillException(response.get('ERRORS')[0])
-            return r.json.get('RESPONSE')
+                raise FastbillException('\n'.join(response.get('ERRORS')))
+            return FastbillResponse(response)
