@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from setuptools import setup
-
 # fix for TypeError: 'NoneType' object is not callable
 import multiprocessing
 
-version = '0.1.2'
+from setuptools import setup
+import pkg_resources
+version = pkg_resources.require("fastbill")[0].version
 
 setup(
     name='fastbill',
