@@ -16,7 +16,8 @@ Dependencies:
 ## Installation
 
 	pip install fastbill
-
+	
+[Official PyPI Fastbill page](https://pypi.python.org/pypi/fastbill/)
 
 ## Usage
 
