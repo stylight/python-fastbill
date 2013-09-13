@@ -3,7 +3,6 @@
 
 
 api_email = "fastbill@example.com"
-api_url = "https://automatic.fastbill.com/api/1.0/api.php"
 api_key = "4"
 
 
@@ -26,16 +25,22 @@ def test_wrapper():
         ],
     }
 
-    api = fastbill.FastbillAPI(api_url, api_email, api_key)
+    api = fastbill.FastbillWrapper(api_email, api_key)
 
     for method_name, calls in TESTCASES.items():
         method = getattr(api, method_name.replace(".", "_"))
 
         for (filter_by, response) in calls:
             def request_callback(method, uri, headers):
-                return (200, headers, json.dumps({'RESPONSE': response}))
+                request = json.loads(method.body)
+                return (200, headers, json.dumps({
+                    'SERVICE': method_name,
+                    'RESPONSE': response,
+                    'REQUEST': request,
+                }))
 
-            httpretty.register_uri(httpretty.POST, api_url,
+            httpretty.register_uri(httpretty.POST,
+                                   fastbill.FastbillWrapper.SERVICE_URL,
                                    body=request_callback)
             result = method(filter=filter_by)
             assert result == response
