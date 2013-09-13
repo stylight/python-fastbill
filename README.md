@@ -20,9 +20,11 @@ Dependencies:
 
 ## Usage
 
+    from fastbill import FastbillWrapper
+    
     # Construct the api client
 
-    client = FastbillAPI('fastbill_user', 'fastbill_key')
+    client = FastbillWrapper('fastbill_user', 'fastbill_key')
 
     # Make requests, e.g. service customer.create
 
