@@ -1,10 +1,13 @@
-# stylight-fastbill
+# python-fastbill
 
-Super thin WIP python wrapper for the fastbill API
+Super thin Python wrapper for Fastbill's HTTP API developed by
+[Stylight](http://www.stylight.de/).
 
 Limitations:
 
-* currently only supports JSON payloads
+* only supports JSON payloads
+* doesn't (overly) check for consistency of responses
+* doesn't convert date strings to datetime objects
 
 Dependencies:
 
@@ -12,14 +15,14 @@ Dependencies:
 
 ## Installation
 
-	pip install git+ssh://git@github.com/stylight/stylight-fastbill.git
+	pip install fastbill
 
 
 ## Usage
 
     # Construct the api client
 
-    client = FastbillAPI('api_endpoint_url', 'fastbill_user', 'fastbill_key')
+    client = FastbillAPI('fastbill_user', 'fastbill_key')
 
     # Make requests, e.g. service customer.create
 

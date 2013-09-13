@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 # fix for TypeError: 'NoneType' object is not callable
-import multiprocessing
+import multiprocessing  # noqa
 
 from setuptools import setup
 import pkg_resources
@@ -15,7 +15,7 @@ setup(
     long_description=open('README.md', 'r').read(),
     author='Dimitar Roustchev',
     author_email='dimitar.roustchev@stylight.com',
-    url='http://github.com/stylight/stylight-fastbill',
+    url='http://github.com/stylight/python-fastbill',
     license='MIT License',
     packages=['fastbill'],
     install_requires=[
