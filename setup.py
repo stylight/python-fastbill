@@ -5,14 +5,17 @@
 import multiprocessing  # noqa
 
 from setuptools import setup
-import pkg_resources
-version = pkg_resources.require("fastbill")[0].version
+
+try:
+    long_description = open('README.md', 'r').read()
+except IOError:
+    long_description = "fastbill"
 
 setup(
     name='fastbill',
-    version=version,
+    version="0.1.4",  # Don't forget to update fastbill.version too
     description='A thin python wrapper for the fastbill API',
-    long_description=open('README.md', 'r').read(),
+    long_description=long_description,
     author='Dimitar Roustchev',
     author_email='dimitar.roustchev@stylight.com',
     url='http://github.com/stylight/python-fastbill',
