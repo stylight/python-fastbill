@@ -33,8 +33,8 @@ def test_wrapper():
         for (filter_by, response) in calls:
             def request_callback(method, uri, headers):
                 request = json.loads(method.body)
+                request['SERVICE'] = method_name
                 return (200, headers, json.dumps({
-                    'SERVICE': method_name,
                     'RESPONSE': response,
                     'REQUEST': request,
                 }))

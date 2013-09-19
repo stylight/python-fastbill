@@ -136,13 +136,13 @@ class FastbillWrapper(object):
 
             # If Fastbill should ever remove the REQUEST or SERVICE section
             # from their responses, just remove the checks.
-            if response['SERVICE'] != method:
+            if response['REQUEST']['SERVICE'] != method:
                 raise FastbillError(
                     "API Error: Got response from wrong service.")
 
-            if response['REQUEST'] != fb_request:
-                raise FastbillError(
-                    "API Error: Got response to wrong request.")
+            #if response['REQUEST'] != fb_request:
+                #raise FastbillError(
+                    #"API Error: Got response to wrong request.")
 
             errors = response['RESPONSE'].get('ERRORS')
             if errors:
