@@ -13,7 +13,7 @@ except IOError:
 
 setup(
     name='fastbill',
-    version="0.1.5",  # Don't forget to update fastbill.version too
+    version="0.1.6",  # Don't forget to update fastbill.version too
     description='A thin python wrapper for the fastbill API',
     long_description=long_description,
     author='Dimitar Roustchev',
@@ -22,7 +22,7 @@ setup(
     license='MIT License',
     packages=['fastbill'],
     install_requires=[
-        'requests==0.14.2',
+        'requests',
     ],
     setup_requires=["nose>=1.0", "httpretty==0.6.3"],
     test_suite="nose.collector",

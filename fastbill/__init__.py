@@ -28,7 +28,7 @@ What it specifically doesn't do:
 import requests
 import json
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 __author__ = 'Dimitar Roustchev'
 
 
