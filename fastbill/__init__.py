@@ -26,6 +26,7 @@ What it specifically doesn't do:
 # pylint: disable-msg=E1103
 
 import requests
+import warnings
 import json
 
 __version__ = '0.1.6'
@@ -127,7 +128,15 @@ class FastbillWrapper(object):
             raise FastbillHttpError(str(http_resp.status_code) + ' ' +
                                     str(http_resp.reason))
         else:
-            response = http_resp.json
+            # Support both old and new requests semantics for now.
+            if callable(http_resp.json):
+                response = http_resp.json()
+            else:
+                warnings.warn("Your requests method is too old. "
+                              "Consider upgrading.",
+                              DeprecationWarning)
+                response = http_resp.json
+
             # The next two checks are here as a failsafe to prevent against
             # (imaginable) multi-threading problems of the API.
             # Disclaimer: I haven't seen those and don't suspect them to
