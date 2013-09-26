@@ -132,7 +132,7 @@ class FastbillWrapper(object):
             if callable(http_resp.json):
                 response = http_resp.json()
             else:
-                warnings.warn("Your requests method is too old. "
+                warnings.warn("Your requests module is too old. "
                               "Consider upgrading.",
                               DeprecationWarning)
                 response = http_resp.json
