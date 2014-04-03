@@ -29,7 +29,7 @@ import requests
 import warnings
 import json
 
-__version__ = '0.1.7'
+__version__ = '0.1.8'
 __author__ = 'Dimitar Roustchev'
 
 
