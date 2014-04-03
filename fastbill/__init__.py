@@ -87,7 +87,11 @@ class FastbillWrapper(object):
 
     SERVICE_URL = "https://automatic.fastbill.com/api/1.0/api.php"
 
-    def __init__(self, email, api_key):
+    def __init__(self, email, api_key, url = None):
+
+        if not url is None:
+            self.SERVICE_URL = url
+
         self.auth = (email, api_key)
         self.headers = {'Content-Type': 'application/json'}
 
