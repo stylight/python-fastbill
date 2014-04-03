@@ -23,10 +23,14 @@ Dependencies:
 
     from fastbill import FastbillWrapper
     
-    # Construct the api client
+    # Construct the api client for Fastbill's automatic API
 
     client = FastbillWrapper('fastbill_user', 'fastbill_key')
-
+    
+    # You can also specify a service_url, in case you need Fastbill's core API instead:
+    
+    core_client = FastbillWrapper('fastbill_user', 'fastbill_key', service_url='endpoint_url')
+    
     # Make requests, e.g. service customer.create
 
     client.customer_create(data={})
