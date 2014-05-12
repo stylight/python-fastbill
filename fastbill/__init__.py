@@ -26,7 +26,7 @@ What it specifically doesn't do:
 # pylint: disable-msg=E1103
 
 import decimal
-decimal_types = (decimal.Decimal)
+decimal_types = (decimal.Decimal,)
 
 try:
     import cdecimal
