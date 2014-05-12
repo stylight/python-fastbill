@@ -17,7 +17,7 @@ What it specifically doesn't do:
  * Verify the data coming back is what you expect.
  * Convert types. (Especially not dates or times)
 
-:copyright: (c) 2013 Stylight GmbH
+:copyright: (c) 2013,2014 Stylight GmbH
 :licence: MIT, see LICENSE for more details.
 
 """
@@ -40,7 +40,7 @@ import json
 import requests
 import warnings
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 __author__ = 'Dimitar Roustchev'
 
 
