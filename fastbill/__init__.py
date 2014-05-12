@@ -25,12 +25,34 @@ What it specifically doesn't do:
 # Pylint can't infer some attributes of request's response object.
 # pylint: disable-msg=E1103
 
+import decimal
+decimal_types = (decimal.Decimal)
+
+try:
+    import cdecimal
+    decimal_types += (cdecimal.Decimal,)
+    decimal = cdecimal
+except ImportError:
+    pass
+
+import datetime
+import json
 import requests
 import warnings
-import json
 
 __version__ = '0.1.8'
 __author__ = 'Dimitar Roustchev'
+
+
+class CustomJsonEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal_types):
+            return str(o)
+        elif type(o) == datetime.date:
+            return o.strftime('%Y-%m-%d')
+        elif type(o) == datetime.datetime:
+            return o.strftime('%Y-%m-%d %H:%M:%S')
+        return super(CustomJsonEncoder, self).default(o)
 
 
 class FastbillError(Exception):
@@ -125,7 +147,8 @@ class FastbillWrapper(object):
         http_resp = requests.post(self.SERVICE_URL,
                                   auth=self.auth,
                                   headers=self.headers,
-                                  data=json.dumps(fb_request))
+                                  data=json.dumps(fb_request,
+                                                  cls=CustomJsonEncoder))
 
         if http_resp.status_code != 200:
             raise FastbillHttpError(str(http_resp.status_code) + ' ' +
