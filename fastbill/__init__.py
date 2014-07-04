@@ -80,7 +80,7 @@ class FastbillResponse(dict):
     """Wrap Fastbill's response and help with iterating over the
     returned result."""
 
-    SECTIONS = ['CUSTOMERS', 'SUBSCRIPTIONS', 'INVOICES', 'TEMPLATES']
+    SECTIONS = ['CUSTOMERS', 'SUBSCRIPTIONS', 'INVOICES', 'TEMPLATES', 'ITEMS']
 
     def __iter__(self):
         # If we iterate over the result we just want the values
