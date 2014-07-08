@@ -22,9 +22,6 @@ What it specifically doesn't do:
 
 """
 
-# Pylint can't infer some attributes of request's response object.
-# pylint: disable-msg=E1103
-
 import decimal
 decimal_types = (decimal.Decimal,)
 
@@ -38,10 +35,13 @@ except ImportError:
 import datetime
 import json
 import requests
-import warnings
+import logging
 
-__version__ = '0.2.1'
+__version__ = '0.3.0'
 __author__ = 'Dimitar Roustchev'
+
+
+logger = logging.getLogger("fastbill.api")
 
 
 class CustomJsonEncoder(json.JSONEncoder):
@@ -144,24 +144,20 @@ class FastbillWrapper(object):
             raise FastbillRequestError("Unknown arguments: %s" %
                                        ", ".join(kw.keys()))
 
+        data = json.dumps(fb_request,
+                          cls=CustomJsonEncoder)
+        logger.debug("Sending data: %r", data)
         http_resp = requests.post(self.SERVICE_URL,
                                   auth=self.auth,
                                   headers=self.headers,
-                                  data=json.dumps(fb_request,
-                                                  cls=CustomJsonEncoder))
+                                  data=data)
 
         if http_resp.status_code != 200:
             raise FastbillHttpError(str(http_resp.status_code) + ' ' +
                                     str(http_resp.reason))
         else:
-            # Support both old and new requests semantics for now.
-            if callable(http_resp.json):
-                response = http_resp.json()
-            else:
-                warnings.warn("Your requests module is too old. "
-                              "Consider upgrading.",
-                              DeprecationWarning)
-                response = http_resp.json
+            response = http_resp.json()
+            logger.debug("Got data: %r", response)
 
             # The next two checks are here as a failsafe to prevent against
             # (imaginable) multi-threading problems of the API.
@@ -174,10 +170,6 @@ class FastbillWrapper(object):
             if response['REQUEST']['SERVICE'] != method:
                 raise FastbillError(
                     "API Error: Got response from wrong service.")
-
-            #if response['REQUEST'] != fb_request:
-                #raise FastbillError(
-                    #"API Error: Got response to wrong request.")
 
             errors = response['RESPONSE'].get('ERRORS')
             if errors:
