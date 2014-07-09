@@ -109,10 +109,16 @@ class FastbillWrapper(object):
 
     SERVICE_URL = "https://automatic.fastbill.com/api/1.0/api.php"
 
-    def __init__(self, email, api_key, service_url=None):
+    def __init__(self, email, api_key,
+                 session=None,
+                 service_url=None):
         if service_url is not None:
             self.SERVICE_URL = service_url
 
+        if session is None:
+            session = requests
+
+        self.session = session
         self.auth = (email, api_key)
         self.headers = {'Content-Type': 'application/json'}
 
@@ -147,10 +153,10 @@ class FastbillWrapper(object):
         data = json.dumps(fb_request,
                           cls=CustomJsonEncoder)
         logger.debug("Sending data: %r", data)
-        http_resp = requests.post(self.SERVICE_URL,
-                                  auth=self.auth,
-                                  headers=self.headers,
-                                  data=data)
+        http_resp = self.session.post(self.SERVICE_URL,
+                                      auth=self.auth,
+                                      headers=self.headers,
+                                      data=data)
 
         if http_resp.status_code != 200:
             raise FastbillHttpError(str(http_resp.status_code) + ' ' +
