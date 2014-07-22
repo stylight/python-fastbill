@@ -75,6 +75,30 @@ class FastbillResponseError(FastbillError):
     pass
 
 
+CURRENCIES = {
+    1: u'EUR',
+    2: u'GBP',
+    3: u'CHF',
+    4: u'USD',
+    5: u'ZAR',
+    6: u'AUD',
+    7: u'CAD',
+    8: u'PLN',
+    9: u'CZK',
+    10: u'CNY',
+    11: u'HUF',
+    12: u'BRL',
+    13: u'RON',
+    14: u'CVE',
+    15: u'DKK',
+    16: u'SEK',
+    17: u'INR',
+    18: u'RUB',
+    20: u'HRK',
+    22: u'MXN',
+}
+
+
 class FastbillResponse(dict):
 
     """Wrap Fastbill's response and help with iterating over the
@@ -86,6 +110,10 @@ class FastbillResponse(dict):
     def __init__(self, resp, api):
         self.api = api
         super(FastbillResponse, self).__init__(resp)
+
+    @property
+    def currency(self):
+        return CURRENCIES[int(self.currency_code)]
 
     def __getattr__(self, key):
         key = key.upper()
