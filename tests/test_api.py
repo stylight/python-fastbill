@@ -53,6 +53,39 @@ class TestWrapper(unittest.TestCase):
         ],
     }
 
+    def test_response(self):
+        import fastbill
+        response = {
+            'SUBSCRIPTIONS': [
+                {
+                    'SUBSCRIPTION': {
+                        'SUBSCRIPTION_ID': '1101',
+                        'CUSTOMER_ID': '296526',
+                        'START': '2013-05-24 13:50:33',
+                        'NEXT_EVENT': '2013-06-24 13:50:33',
+                        'CANCELLATION_DATE': '2013-06-24 13:50:33',
+                        'STATUS': 'canceled',
+                        'ARTICLE_NUMBER': '1',
+                        'SUBSCRIPTION_EXT_UID': '',
+                        'LAST_EVENT': '2013-05-24 13:50:33',
+                    }
+                }
+            ]
+        }
+
+        class FakeAPI(object):
+            def subscription_get(self, filter=None):
+                return fastbill.FastbillResponse(response, self)
+
+        resp = fastbill.FastbillResponse(response, FakeAPI())
+        self.assertEquals(response,
+                          resp.subscriptions[0].subscription.subscription)
+        self.assertRaises(AttributeError, getattr, resp, 'blah')
+        resp_iter = iter(resp)
+        self.assertEqual(next(resp_iter),
+                         response['SUBSCRIPTIONS'][0])
+        self.assertRaises(StopIteration, next, resp_iter)
+
     @httpretty.activate
     def test_wrapper(self):
         import fastbill

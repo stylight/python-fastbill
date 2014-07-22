@@ -80,13 +80,36 @@ class FastbillResponse(dict):
     """Wrap Fastbill's response and help with iterating over the
     returned result."""
 
-    SECTIONS = ['CUSTOMERS', 'SUBSCRIPTIONS', 'INVOICES', 'TEMPLATES', 'ITEMS', 'ARTICLES']
+    SECTIONS = ['ARTICLES', 'CUSTOMERS', 'INVOICES', 'ITEMS', 'SUBSCRIPTIONS',
+                'TEMPLATES']
+
+    def __init__(self, resp, api):
+        self.api = api
+        super(FastbillResponse, self).__init__(resp)
+
+    def __getattr__(self, key):
+        key = key.upper()
+        if key not in self:
+            id_value = key + "_ID"
+            if id_value in self:
+                return getattr(self.api, "%s_get" % key.lower())(
+                    filter={id_value: self[id_value]}
+                )
+            else:
+                raise AttributeError("%s not found." % key)
+        elif type(self[key]) == dict:
+            return self.__class__(self[key], self.api)
+        elif type(self[key]) == list:
+            return [self.__class__(entry, self.api)
+                    for entry in self[key]]
+        else:
+            return self[key]
 
     def __iter__(self):
         # If we iterate over the result we just want the values
         # and not the stuff we got sent alongside.
         for section in self.SECTIONS:
-            if section in self.keys():
+            if section in self:
                 return iter(self[section])
 
         return iter([])
@@ -180,4 +203,5 @@ class FastbillWrapper(object):
             errors = response['RESPONSE'].get('ERRORS')
             if errors:
                 raise FastbillResponseError('\n'.join(errors))
-            return FastbillResponse(response['RESPONSE'])
+
+            return FastbillResponse(response['RESPONSE'], self)
