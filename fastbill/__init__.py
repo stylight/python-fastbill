@@ -37,7 +37,7 @@ import json
 import requests
 import logging
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 __author__ = 'Dimitar Roustchev'
 
 
@@ -187,6 +187,9 @@ class FastbillWrapper(object):
         self.headers = {'Content-Type': 'application/json'}
 
     def __getattr__(self, name):
+        if name.startswith("_"):
+            raise AttributeError("No such attribute: %s" % name)
+
         method = name.replace("_", ".")
 
         def api_method(**kw):

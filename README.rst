@@ -10,6 +10,12 @@ Super thin Python wrapper for Fastbill's HTTP API developed by `STYLIGHT <http:/
 Latest release:
 ---------------
 
+`fastbill 0.4.3 <https://pypi.python.org/pypi/fastbill/>`_
+
+ * Bugfix release.
+ * Calls to potential special methods like __unicode__ would lead to an
+   erroneous Fastbill API call.
+
 `fastbill 0.4.2 <https://pypi.python.org/pypi/fastbill/>`_
 
  * Improved debug logging.
