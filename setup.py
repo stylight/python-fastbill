@@ -7,7 +7,9 @@ import multiprocessing  # noqa
 from setuptools import setup
 
 try:
-    long_description = open('README.md', 'r').read()
+    from os.path import abspath, dirname, join
+    _desc = join(dirname(abspath(__file__)), 'README.rst')
+    long_description = open(_desc, 'r').read()
 except IOError:
     long_description = "fastbill"
 
