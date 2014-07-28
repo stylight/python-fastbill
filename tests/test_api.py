@@ -34,12 +34,17 @@ class JsonTest(unittest.TestCase):
 class TestWrapper(unittest.TestCase):
     TESTCASES = {
         'customer.get': [
-            ({'country_code': 'at'}, {'CUSTOMERS': []}),
-            ({'country_code': 'de'}, {'CUSTOMERS': [{'NAME': 'Hans'}]}),
+            ({'country_code': 'at'}, 200, {'CUSTOMERS': []}),
+            ({'country_code': 'de'}, 200, {'CUSTOMERS': [{'NAME': 'Hans'}]}),
+        ],
+
+        '..getnewargs..': [
+            ({}, 400, {u'ERRORS': [u'unknown SERVICE: ..getnewargs..',
+                              u'unknown SERVICE: ']}),
         ],
 
         'subscription.get': [
-            ({}, {}),
+            ({}, 200, {}),
         ],
         'subscription.setusagedata': [
             (
@@ -48,6 +53,7 @@ class TestWrapper(unittest.TestCase):
                     'UNIT_PRICE': decimal.Decimal('17.23'),
                     'CURRENCY_CODE': u'EUR',
                 },
+                200,
                 {}
             ),
         ],
@@ -95,11 +101,11 @@ class TestWrapper(unittest.TestCase):
         for method_name, calls in self.TESTCASES.items():
             method = getattr(api, method_name.replace(".", "_"))
 
-            for (filter_by, response) in calls:
-                def request_callback(method, uri, headers):
+            for (filter_by, http_code, response) in calls:
+                def request_callback(method, _, headers):
                     request = json.loads(method.body)
                     request['SERVICE'] = method_name
-                    return (200, headers, json.dumps({
+                    return (http_code, headers, json.dumps({
                         'RESPONSE': response,
                         'REQUEST': request,
                     }, cls=fastbill.CustomJsonEncoder))
@@ -107,8 +113,14 @@ class TestWrapper(unittest.TestCase):
                 httpretty.register_uri(httpretty.POST,
                                        fastbill.FastbillWrapper.SERVICE_URL,
                                        body=request_callback)
-                result = method(filter=filter_by)
-                self.assertEqual(result, response)
+                params = {'filter': filter_by}
+
+                if http_code == 200:
+                    result = method(**params)
+                    self.assertEqual(result, response)
+                else:
+                    self.assertRaises(fastbill.FastbillResponseError,
+                                      method, **params)
 
 
 if __name__ == '__main__':

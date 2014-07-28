@@ -66,11 +66,10 @@ class FastbillRequestError(FastbillError):
 
 
 class FastbillHttpError(FastbillError):
-    """Raised if there are problems with the API server."""
     pass
 
 
-class FastbillResponseError(FastbillError):
+class FastbillResponseError(FastbillHttpError):
     """Raised if Fastbill reports errors in the response."""
     pass
 
@@ -143,6 +142,18 @@ class FastbillResponse(dict):
         return iter([])
 
 
+def _abort(http_resp, errors=None):
+    if errors:
+        desc = "Errors were"
+        msg = '\n'.join(" > %s" % error for error in errors)
+    else:
+        desc = "Response was"
+        msg = http_resp.content
+
+    raise FastbillResponseError(u"%d %s\n%s:\n%s" % (
+        http_resp.status_code, http_resp.reason, desc, msg))
+
+
 class FastbillWrapper(object):
 
     u"""Wrap Fastbill's HTTP API for easier usage.
@@ -165,6 +176,8 @@ class FastbillWrapper(object):
                  service_url=None):
         if service_url is not None:
             self.SERVICE_URL = service_url
+
+        logger.debug("Using endpoint %r", self.SERVICE_URL)
 
         if session is None:
             session = requests
@@ -204,32 +217,27 @@ class FastbillWrapper(object):
         data = json.dumps(fb_request,
                           cls=CustomJsonEncoder)
         logger.debug("Sending data: %r", data)
+
         http_resp = self.session.post(self.SERVICE_URL,
                                       auth=self.auth,
                                       headers=self.headers,
                                       data=data)
-
-        if http_resp.status_code != 200:
-            raise FastbillHttpError(str(http_resp.status_code) + ' ' +
-                                    str(http_resp.reason))
-        else:
+        try:
             response = http_resp.json()
+        except ValueError:
+            logger.debug("Got data: %r", http_resp.content)
+            _abort(http_resp)
+        else:
             logger.debug("Got data: %r", response)
 
-            # The next two checks are here as a failsafe to prevent against
-            # (imaginable) multi-threading problems of the API.
-            # Disclaimer: I haven't seen those and don't suspect them to
-            # appear, but I can imagine them and this field is perfectly
-            # usable to prevent these responses from slipping through.
+        errors = response['RESPONSE'].get('ERRORS')
+        if errors:
+            _abort(http_resp, errors)
 
-            # If Fastbill should ever remove the REQUEST or SERVICE section
-            # from their responses, just remove the checks.
-            if response['REQUEST']['SERVICE'] != method:
-                raise FastbillError(
-                    "API Error: Got response from wrong service.")
+        # If Fastbill should ever remove the REQUEST or SERVICE section
+        # from their responses, just remove the checks.
+        if response['REQUEST']['SERVICE'] != method:
+            raise FastbillError(
+                "API Error: Got response from wrong service.")
 
-            errors = response['RESPONSE'].get('ERRORS')
-            if errors:
-                raise FastbillResponseError('\n'.join(errors))
-
-            return FastbillResponse(response['RESPONSE'], self)
+        return FastbillResponse(response['RESPONSE'], self)
