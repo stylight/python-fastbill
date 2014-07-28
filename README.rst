@@ -3,6 +3,9 @@ python-fastbill
 
 Super thin Python wrapper for Fastbill's HTTP API developed by `STYLIGHT <http://www.stylight.de/>`_.
 
+.. image:: https://travis-ci.org/stylight/python-fastbill.svg?branch=master
+    :target: https://travis-ci.org/stylight/python-fastbill
+
 
 Latest release:
 ---------------
