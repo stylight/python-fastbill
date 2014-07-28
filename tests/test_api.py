@@ -38,8 +38,13 @@ class TestWrapper(unittest.TestCase):
             ({'country_code': 'de'}, 200, {'CUSTOMERS': [{'NAME': 'Hans'}]}),
         ],
 
-        '..getnewargs..': [
-            ({}, 400, {u'ERRORS': [u'unknown SERVICE: ..getnewargs..',
+        'getnewargs': [
+            ({}, 400, {u'ERRORS': [u'unknown SERVICE: getnewargs',
+                              u'unknown SERVICE: ']}),
+        ],
+
+        '..unicode..': [
+            ({}, 400, {u'ERRORS': [u'unknown SERVICE: getnewargs',
                               u'unknown SERVICE: ']}),
         ],
 
@@ -99,7 +104,12 @@ class TestWrapper(unittest.TestCase):
         api = fastbill.FastbillWrapper(api_email, api_key)
 
         for method_name, calls in self.TESTCASES.items():
-            method = getattr(api, method_name.replace(".", "_"))
+            attribute_name = method_name.replace(".", "_")
+            try:
+                method = getattr(api, attribute_name)
+            except AttributeError:
+                if not attribute_name.startswith("_"):
+                    raise
 
             for (filter_by, http_code, response) in calls:
                 def request_callback(method, _, headers):
