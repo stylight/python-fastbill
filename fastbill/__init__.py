@@ -104,7 +104,7 @@ class FastbillResponse(dict):
     returned result."""
 
     SECTIONS = ['ARTICLES', 'CUSTOMERS', 'INVOICES', 'ITEMS', 'SUBSCRIPTIONS',
-                'TEMPLATES']
+                'TEMPLATES', 'EXPENSES']
 
     def __init__(self, resp, api):
         self.api = api
