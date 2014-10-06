@@ -10,6 +10,11 @@ Super thin Python wrapper for Fastbill's HTTP API developed by `STYLIGHT <http:/
 Latest release:
 ---------------
 
+`fastbill 0.5.1 <https://pypi.python.org/pypi/fastbill/>`_
+
+ * Support pickling of `FastbillResponse` objects. The link to the API connection
+   will not be pickled though. API credentials will also not be pickled.
+
 `fastbill 0.5.0 <https://pypi.python.org/pypi/fastbill/>`_
 
  * Introduce `name` parameter to better distinguish `FastbillWrapper` instances.
