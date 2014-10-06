@@ -13,6 +13,25 @@ import json
 import unittest
 
 
+RESPONSE_DATA = {
+    'SUBSCRIPTIONS': [
+        {
+            'SUBSCRIPTION': {
+                'SUBSCRIPTION_ID': '1101',
+                'CUSTOMER_ID': '296526',
+                'START': '2013-05-24 13:50:33',
+                'NEXT_EVENT': '2013-06-24 13:50:33',
+                'CANCELLATION_DATE': '2013-06-24 13:50:33',
+                'STATUS': 'canceled',
+                'ARTICLE_NUMBER': '1',
+                'SUBSCRIPTION_EXT_UID': '',
+                'LAST_EVENT': '2013-05-24 13:50:33',
+            }
+        }
+    ]
+}
+
+
 class JsonTest(unittest.TestCase):
 
     def test_json_encoder(self):
@@ -66,23 +85,7 @@ class TestWrapper(unittest.TestCase):
 
     def test_response(self):
         import fastbill
-        response = {
-            'SUBSCRIPTIONS': [
-                {
-                    'SUBSCRIPTION': {
-                        'SUBSCRIPTION_ID': '1101',
-                        'CUSTOMER_ID': '296526',
-                        'START': '2013-05-24 13:50:33',
-                        'NEXT_EVENT': '2013-06-24 13:50:33',
-                        'CANCELLATION_DATE': '2013-06-24 13:50:33',
-                        'STATUS': 'canceled',
-                        'ARTICLE_NUMBER': '1',
-                        'SUBSCRIPTION_EXT_UID': '',
-                        'LAST_EVENT': '2013-05-24 13:50:33',
-                    }
-                }
-            ]
-        }
+        response = RESPONSE_DATA
 
         class FakeAPI(object):
             def subscription_get(self, filter=None):
@@ -131,6 +134,24 @@ class TestWrapper(unittest.TestCase):
                 else:
                     self.assertRaises(fastbill.FastbillResponseError,
                                       method, **params)
+
+    def test_pickle(self):
+        import pickle
+        import fastbill
+
+        api = fastbill.FastbillWrapper(api_email, api_key)
+        response = fastbill.FastbillResponse(RESPONSE_DATA, api)
+        pickled_response = pickle.dumps(response)
+        unpickled_response = pickle.loads(pickled_response)
+        self.assertIsNone(unpickled_response.api)
+        self.assertEquals(
+            unpickled_response.subscriptions[0].subscription.article_number,
+            '1')
+        self.assertRaises(
+            KeyError,
+            lambda: unpickled_response.subscriptions[0].subscription.customer)
+
+
 
 
 if __name__ == '__main__':

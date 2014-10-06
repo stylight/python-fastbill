@@ -110,13 +110,16 @@ class FastbillResponse(dict):
         self.api = api
         super(FastbillResponse, self).__init__(resp)
 
+    def __reduce__(self):
+        return (self.__class__, (dict(self), None), None, None, None)
+
     @property
     def currency(self):
         return CURRENCIES[int(self.currency_code)]
 
     def __getattr__(self, key):
         key = key.upper()
-        if key not in self:
+        if key not in self and self.api is not None:
             id_value = key + "_ID"
             if id_value in self:
                 return getattr(self.api, "%s_get" % key.lower())(
