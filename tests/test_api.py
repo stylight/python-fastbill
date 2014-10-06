@@ -143,7 +143,7 @@ class TestWrapper(unittest.TestCase):
         response = fastbill.FastbillResponse(RESPONSE_DATA, api)
         pickled_response = pickle.dumps(response)
         unpickled_response = pickle.loads(pickled_response)
-        self.assertIsNone(unpickled_response.api)
+        self.assertTrue(unpickled_response.api is None)
         self.assertEquals(
             unpickled_response.subscriptions[0].subscription.article_number,
             '1')
