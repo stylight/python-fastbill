@@ -37,8 +37,8 @@ import json
 import requests
 import logging
 
-__version__ = '0.4.3'
-__author__ = 'Dimitar Roustchev'
+__version__ = '0.5.0'
+__author__ = 'python-fastbill contributors'
 
 
 logger = logging.getLogger("fastbill.api")
@@ -173,7 +173,8 @@ class FastbillWrapper(object):
 
     def __init__(self, email, api_key,
                  session=None,
-                 service_url=None):
+                 service_url=None,
+                 name=None):
         if service_url is not None:
             self.SERVICE_URL = service_url
 
@@ -182,9 +183,22 @@ class FastbillWrapper(object):
         if session is None:
             session = requests
 
+        # We use this so clients can identify the API by some arbitrary name.
+        # This is useful when dealing with many distinct accounts.
+        if name is not None:
+            assert isinstance(name, basestring), "Only strings please."
+        self.name = name
+
         self.session = session
         self.auth = (email, api_key)
         self.headers = {'Content-Type': 'application/json'}
+
+    def __repr__(self):
+        return "<%s%s at 0x%x>" % (
+            self.__class__.__name__,
+            " %s" % self.name if self.name is not None else '',
+            id(self)
+        )
 
     def __getattr__(self, name):
         if name.startswith("_"):

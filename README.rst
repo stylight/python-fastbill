@@ -10,6 +10,10 @@ Super thin Python wrapper for Fastbill's HTTP API developed by `STYLIGHT <http:/
 Latest release:
 ---------------
 
+`fastbill 0.5.0 <https://pypi.python.org/pypi/fastbill/>`_
+
+ * Introduce `name` parameter to better distinguish `FastbillWrapper` instances.
+
 `fastbill 0.4.3 <https://pypi.python.org/pypi/fastbill/>`_
 
  * Bugfix release.
@@ -33,11 +37,6 @@ Latest release:
    abbreviation when a CURRENCY_CODE integer is present in the response. An
    `AttributeError` will be raised when it's not present.
 
-`fastbill 0.3.1 <https://pypi.python.org/pypi/fastbill/>`_
-
- * Added support for converting `datetime`, `date`, and `Decimal` types on
-   egress. **Note:** Ingress converting is not supported (yet). Builtin numeric
-   types have been supported from the start.
 
 Limitations:
 ------------
