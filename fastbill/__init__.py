@@ -37,7 +37,7 @@ import json
 import requests
 import logging
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 __author__ = 'python-fastbill contributors'
 
 
@@ -95,6 +95,7 @@ CURRENCIES = {
     18: u'RUB',
     20: u'HRK',
     22: u'MXN',
+    25: u'NOK',
 }
 
 

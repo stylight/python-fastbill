@@ -10,6 +10,10 @@ Super thin Python wrapper for Fastbill's HTTP API developed by `STYLIGHT <http:/
 Latest release:
 ---------------
 
+`fastbill 0.5.2 <https://pypi.python.org/pypi/fastbill/>`_
+
+ * Added NOK to CURRENCIES dict.
+
 `fastbill 0.5.1 <https://pypi.python.org/pypi/fastbill/>`_
 
  * Support pickling of `FastbillResponse` objects. The link to the API connection
