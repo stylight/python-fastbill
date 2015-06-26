@@ -10,6 +10,11 @@ Super thin Python wrapper for Fastbill's HTTP API developed by `STYLIGHT <http:/
 Latest release:
 ---------------
 
+`fastbill 0.6.0 <https://pypi.python.org/pypi/fastbill/>`_
+
+ * *Breaking change*: Don't throw a KeyError, but rather an AttributeError on FastbillResponse.currency property
+ * Add pre- and post-request callbacks
+
 `fastbill 0.5.2 <https://pypi.python.org/pypi/fastbill/>`_
 
  * Added NOK to CURRENCIES dict.
