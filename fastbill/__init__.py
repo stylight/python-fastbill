@@ -181,7 +181,45 @@ class FastbillWrapper(object):
     def __init__(self, email, api_key,
                  session=None,
                  service_url=None,
-                 name=None):
+                 name=None,
+                 pre_request=None,
+                 post_request=None):
+        """
+        Args:
+            email (str): Your Fastbill user, basically an email address.
+            api_key (str): Your Fastbill api_key.
+
+        Kwargs:
+            name (str): A value with which you can tag your API instance.
+
+            pre_request (callable): Will be called before any API request.
+
+                Parameters: method, payload
+
+            post_request (callable): Will be called after any API request.
+
+                Parameters: method, payload, http_response
+
+            If you supply pre or post request callbacks, please make sure
+            they have the right arity.
+
+        """
+        def nop(*args):
+            "Do nothing."
+            pass
+
+        if pre_request is not None:
+            assert callable(pre_request)
+            self._pre_request_callback = pre_request
+        else:
+            self._pre_request_callback = nop
+
+        if post_request is not None:
+            assert callable(post_request)
+            self._post_request_callback = post_request
+        else:
+            self._post_request_callback = nop
+
         if service_url is not None:
             self.SERVICE_URL = service_url
 
@@ -242,10 +280,13 @@ class FastbillWrapper(object):
                           cls=CustomJsonEncoder)
         logger.debug("Sending data: %r", data)
 
+        self._pre_request_callback(method, fb_request)
         http_resp = self.session.post(self.SERVICE_URL,
                                       auth=self.auth,
                                       headers=self.headers,
                                       data=data)
+        self._post_request_callback(method, fb_request, http_resp)
+
         try:
             response = http_resp.json()
         except ValueError:

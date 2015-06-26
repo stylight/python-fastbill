@@ -62,11 +62,6 @@ class TestWrapper(unittest.TestCase):
                               u'unknown SERVICE: ']}),
         ],
 
-        '..unicode..': [
-            ({}, 400, {u'ERRORS': [u'unknown SERVICE: getnewargs',
-                              u'unknown SERVICE: ']}),
-        ],
-
         'subscription.get': [
             ({}, 200, {}),
         ],
@@ -103,8 +98,21 @@ class TestWrapper(unittest.TestCase):
     @httpretty.activate
     def test_wrapper(self):
         import fastbill
+        from mock import Mock
 
-        api = fastbill.FastbillWrapper(api_email, api_key)
+        mock = Mock()
+
+        class ResponseLookAlike(object):
+            def __init__(self, status_code):
+                self.status_code = status_code
+            def __eq__(self, other):
+                return self.status_code == other.status_code
+
+
+        api = fastbill.FastbillWrapper(api_email, api_key,
+                                       pre_request=mock.pre_request,
+                                       post_request=mock.post_request,
+                                      )
 
         for method_name, calls in self.TESTCASES.items():
             attribute_name = method_name.replace(".", "_")
@@ -115,7 +123,10 @@ class TestWrapper(unittest.TestCase):
                     raise
 
             for (filter_by, http_code, response) in calls:
-                def request_callback(method, _, headers):
+                def request_callback(method, _, headers,
+                                     method_name=method_name,
+                                     http_code=http_code,
+                                     response=response):
                     request = json.loads(method.body)
                     request['SERVICE'] = method_name
                     return (http_code, headers, json.dumps({
@@ -134,6 +145,27 @@ class TestWrapper(unittest.TestCase):
                 else:
                     self.assertRaises(fastbill.FastbillResponseError,
                                       method, **params)
+
+
+                # The actual payload will look like this.
+                payload = params.copy()
+                payload.update({
+                    'service': method_name,
+                    'limit': None,
+                    'offset': None,
+                    'data': None
+                })
+
+                mock.pre_request.assert_called_with(
+                    method_name,
+                    payload
+                )
+
+                mock.post_request.assert_called_with(
+                    method_name,
+                    payload,
+                    ResponseLookAlike(http_code)
+                )
 
     def test_pickle(self):
         import pickle
