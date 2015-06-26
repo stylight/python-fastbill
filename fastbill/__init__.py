@@ -116,7 +116,10 @@ class FastbillResponse(dict):
 
     @property
     def currency(self):
-        return CURRENCIES[int(self.currency_code)]
+        try:
+            return CURRENCIES[int(self.currency_code)]
+        except KeyError as exc:
+            raise AttributeError(unicode(exc))
 
     def __getattr__(self, key):
         key = key.upper()
