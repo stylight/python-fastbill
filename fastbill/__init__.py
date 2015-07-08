@@ -22,22 +22,7 @@ What it specifically doesn't do:
 
 """
 
-import decimal
-decimal_types = (decimal.Decimal,)
-
-try:
-    import cdecimal
-    decimal_types += (cdecimal.Decimal,)
-    decimal = cdecimal
-except ImportError:
-    pass
-
-import datetime
-import json
-import requests
-import logging
-
-__version__ = '0.6.0'
+__version__ = '0.7.0'
 __author__ = 'python-fastbill contributors'
 
 from .wrapper import FastbillWrapper
