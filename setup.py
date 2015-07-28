@@ -25,8 +25,9 @@ setup(
     packages=['fastbill'],
     install_requires=[
         'requests',
+        'six'
     ],
-    setup_requires=["nose>=1.0", "httpretty==0.6.3", 'mock==1.0.1'],
+    setup_requires=["nose>=1.0", "httpretty==0.8.10", 'mock==1.2.0'],
     test_suite="nose.collector",
     keywords='fastbill api'
 )

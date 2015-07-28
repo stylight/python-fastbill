@@ -1,4 +1,5 @@
 import pprint as _pp
+import six as _six
 
 import requests as _requests
 
@@ -77,7 +78,7 @@ class FastbillWrapper(object):
         # We use this so clients can identify the API by some arbitrary name.
         # This is useful when dealing with many distinct accounts.
         if name is not None:
-            assert isinstance(name, basestring), "Only strings please."
+            assert isinstance(name, _six.text_type), "Only strings please."
         self.name = name
 
         self.session = session
