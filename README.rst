@@ -14,8 +14,14 @@ Super thin Python wrapper for Fastbill's HTTP API developed by `STYLIGHT <http:/
 Latest release:
 ---------------
 
+`fastbill 0.7.1 <https://pypi.python.org/pypi/fastbill/>`_
+
+ * Bugfix release for name parameter.
+
 `fastbill 0.7.0 <https://pypi.python.org/pypi/fastbill/>`_
 
+ * Warning: This release has a bug. The 'name' parameter will break on str
+   types on Python2. Use 0.7.1 instead.
  * *Potentially breaking change*: Restructure fastbill module into package
    with each component having it's own module. Your imports may break.
 
