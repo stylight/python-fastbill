@@ -43,10 +43,10 @@ class JsonTest(unittest.TestCase):
         }, cls=fastbill.jsonencoder.CustomJsonEncoder)
 
         self.assertEqual(
-            json_dump,
-            '{"date": "2016-06-02", '
-            '"money": "17.23", '
-            '"datetime": "2015-05-01 14:42:17"}'
+            json.loads(json_dump),
+            {'date': '2016-06-02',
+             'money': '17.23',
+             'datetime': '2015-05-01 14:42:17'}
         )
 
 
@@ -59,7 +59,7 @@ class TestWrapper(unittest.TestCase):
 
         'getnewargs': [
             ({}, 400, {u'ERRORS': [u'unknown SERVICE: getnewargs',
-                              u'unknown SERVICE: ']}),
+                                   u'unknown SERVICE: ']}),
         ],
 
         'subscription.get': [
@@ -87,8 +87,8 @@ class TestWrapper(unittest.TestCase):
                 return fastbill.response.FastbillResponse(response, self)
 
         resp = fastbill.response.FastbillResponse(response, FakeAPI())
-        self.assertEquals(response,
-                          resp.subscriptions[0].subscription.subscription)
+        self.assertEqual(response,
+                         resp.subscriptions[0].subscription.subscription)
         self.assertRaises(AttributeError, getattr, resp, 'blah')
         resp_iter = iter(resp)
         self.assertEqual(next(resp_iter),
@@ -105,14 +105,13 @@ class TestWrapper(unittest.TestCase):
         class ResponseLookAlike(object):
             def __init__(self, status_code):
                 self.status_code = status_code
+
             def __eq__(self, other):
                 return self.status_code == other.status_code
 
-
         api = fastbill.FastbillWrapper(api_email, api_key,
                                        pre_request=mock.pre_request,
-                                       post_request=mock.post_request,
-                                      )
+                                       post_request=mock.post_request)
 
         for method_name, calls in self.TESTCASES.items():
             attribute_name = method_name.replace(".", "_")
@@ -127,7 +126,7 @@ class TestWrapper(unittest.TestCase):
                                      method_name=method_name,
                                      http_code=http_code,
                                      response=response):
-                    request = json.loads(method.body)
+                    request = json.loads(method.body.decode('utf8'))
                     request['SERVICE'] = method_name
                     return (http_code, headers, json.dumps({
                         'RESPONSE': response,
@@ -145,7 +144,6 @@ class TestWrapper(unittest.TestCase):
                 else:
                     self.assertRaises(fastbill.exceptions.FastbillResponseError,
                                       method, **params)
-
 
                 # The actual payload will look like this.
                 payload = params.copy()
@@ -176,14 +174,12 @@ class TestWrapper(unittest.TestCase):
         pickled_response = pickle.dumps(response)
         unpickled_response = pickle.loads(pickled_response)
         self.assertTrue(unpickled_response.api is None)
-        self.assertEquals(
+        self.assertEqual(
             unpickled_response.subscriptions[0].subscription.article_number,
             '1')
         self.assertRaises(
             KeyError,
             lambda: unpickled_response.subscriptions[0].subscription.customer)
-
-
 
 
 if __name__ == '__main__':

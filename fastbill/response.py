@@ -1,3 +1,6 @@
+import six as _six
+
+
 CURRENCIES = {
     1: u'EUR',
     2: u'GBP',
@@ -43,7 +46,7 @@ class FastbillResponse(dict):
         try:
             return CURRENCIES[int(self.currency_code)]
         except KeyError as exc:
-            raise AttributeError(unicode(exc))
+            raise AttributeError(_six.text_type(exc))
 
     def __getattr__(self, key):
         key = key.upper()
