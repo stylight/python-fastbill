@@ -25,6 +25,10 @@ Latest release:
  * *Potentially breaking change*: Restructure fastbill module into package
    with each component having it's own module. Your imports may break.
 
+`fastbill 0.6.1 <https://pypi.python.org/pypi/fastbill/>`_
+
+ * Added mock library to setup.py
+
 `fastbill 0.6.0 <https://pypi.python.org/pypi/fastbill/>`_
 
  * *Breaking change*: Don't throw a KeyError, but rather an AttributeError on FastbillResponse.currency property
