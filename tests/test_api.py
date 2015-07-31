@@ -169,7 +169,7 @@ class TestWrapper(unittest.TestCase):
         import pickle
         import fastbill
 
-        api = fastbill.FastbillWrapper(api_email, api_key)
+        api = fastbill.FastbillWrapper(api_email, api_key, name="blah")
         response = fastbill.response.FastbillResponse(RESPONSE_DATA, api)
         pickled_response = pickle.dumps(response)
         unpickled_response = pickle.loads(pickled_response)
