@@ -18,11 +18,25 @@ setup(
     version="0.7.0",  # Don't forget to update fastbill.version too
     description='A thin python wrapper for the fastbill API',
     long_description=long_description,
-    author='Dimitar Roustchev',
+    author='python-fastbill contributors',
     author_email='dimitar.roustchev@stylight.com',
     url='http://github.com/stylight/python-fastbill',
     license='MIT License',
     packages=['fastbill'],
+    classifiers=[
+        'Intended Audience :: Developers',
+        'Topic :: Office/Business',
+        'Topic :: Office/Business :: Financial',
+        'License :: OSI Approved',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+    ],
     install_requires=[
         'requests',
         'six'
