@@ -27,7 +27,7 @@ setup(
         'requests',
         'six'
     ],
-    setup_requires=["nose>=1.0", "httpretty==0.8.10", 'mock==1.2.0'],
+    setup_requires=["nose>=1.0", "httpretty==0.8.10", 'mock==1.0.1'],
     test_suite="nose.collector",
     keywords='fastbill api'
 )
