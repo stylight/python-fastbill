@@ -2,15 +2,17 @@
 # encoding: utf-8
 
 
-api_email = "fastbill@example.com"
-api_key = "4"
-
-
 import datetime
 import decimal
 import httpretty
 import json
 import unittest
+
+# Set the endpoint to http because some library combination
+# leads to a SSLError when running the test with httpretty.
+api_endpoint = "http://automatic.fastbill.com/api/1.0/api.php"
+api_email = "fastbill@example.com"
+api_key = "4"
 
 
 RESPONSE_DATA = {
@@ -110,6 +112,7 @@ class TestWrapper(unittest.TestCase):
                 return self.status_code == other.status_code
 
         api = fastbill.FastbillWrapper(api_email, api_key,
+                                       service_url=api_endpoint,
                                        pre_request=mock.pre_request,
                                        post_request=mock.post_request)
 
@@ -134,7 +137,7 @@ class TestWrapper(unittest.TestCase):
                     }, cls=fastbill.jsonencoder.CustomJsonEncoder))
 
                 httpretty.register_uri(httpretty.POST,
-                                       fastbill.FastbillWrapper.SERVICE_URL,
+                                       api.SERVICE_URL,
                                        body=request_callback)
                 params = {'filter': filter_by}
 
@@ -169,7 +172,9 @@ class TestWrapper(unittest.TestCase):
         import pickle
         import fastbill
 
-        api = fastbill.FastbillWrapper(api_email, api_key, name="blah")
+        api = fastbill.FastbillWrapper(api_email, api_key,
+                                       service_url=api_endpoint,
+                                       name="blah")
         response = fastbill.response.FastbillResponse(RESPONSE_DATA, api)
         pickled_response = pickle.dumps(response)
         unpickled_response = pickle.loads(pickled_response)
