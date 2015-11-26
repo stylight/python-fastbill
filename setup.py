@@ -13,13 +13,14 @@ try:
 except IOError:
     long_description = "fastbill"
 
+
 setup(
     name='fastbill',
     version="0.7.1",  # Don't forget to update fastbill.version too
     description='A thin python wrapper for the fastbill API',
     long_description=long_description,
     author='python-fastbill contributors',
-    author_email='dimitar.roustchev@stylight.com',
+    author_email='busdev_engineers@stylight.com',
     url='http://github.com/stylight/python-fastbill',
     license='MIT License',
     packages=['fastbill'],
