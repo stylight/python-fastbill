@@ -14,6 +14,11 @@ Super thin Python wrapper for Fastbill's HTTP API developed by `STYLIGHT <http:/
 Latest release:
 ---------------
 
+`fastbill 0.7.2  <https://pypi.python.org/pypi/fastbill/>`_
+
+ * Add configurable timeout to all API calls. The default timeout is 1 minute.
+   *This could lead to unexpected timeout exceptions, you'll need to handle.*
+
 `fastbill 0.7.1 <https://pypi.python.org/pypi/fastbill/>`_
 
  * Bugfix release for name parameter.
