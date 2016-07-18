@@ -32,7 +32,8 @@ class FastbillWrapper(object):
                  service_url=None,
                  name=None,
                  pre_request=None,
-                 post_request=None):
+                 post_request=None,
+                 timeout=60):
         """
         Args:
             email (str): Your Fastbill user, basically an email address.
@@ -49,10 +50,14 @@ class FastbillWrapper(object):
 
                 Parameters: method, payload, http_response
 
+            timeout (int): Request timeout.
+
             If you supply pre or post request callbacks, please make sure
             they have the right arity.
 
         """
+        self.timeout = timeout
+
         def _nop(*args):
             """Do nothing."""
             pass
@@ -133,6 +138,7 @@ class FastbillWrapper(object):
         http_resp = self.session.post(self.SERVICE_URL,
                                       auth=self.auth,
                                       headers=self.headers,
+                                      timeout=self.timeout,
                                       data=data)
         self._post_request_callback(service, fb_request, http_resp)
 
