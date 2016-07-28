@@ -153,7 +153,7 @@ class FastbillWrapper(object):
 
         errors = json_resp['RESPONSE'].get('ERRORS')
         if errors:
-            _abort_api(service, json_resp)
+            _abort_api(service, json_resp, errors)
 
         # If Fastbill should ever remove the REQUEST or SERVICE section
         # from their responses, just remove the checks.
@@ -164,20 +164,39 @@ class FastbillWrapper(object):
         return _response.FastbillResponse(json_resp['RESPONSE'], self)
 
 
-def _abort_api(method, json_resp):
+def _abort_api(method, json_resp, error_list):
+    """
+    >>> json_resp = {'RESPONSE': {'ERRORS': [{'title': 'Foo'}]}}
+    >>> error_list = json_resp['RESPONSE'].get('ERRORS')
+    >>> _abort_api("foo.get", json_resp, error_list)
+    Traceback (most recent call last):
+    ...
+    FastbillResponseError: Error in foo.get:\
+ {'RESPONSE': {'ERRORS': [{'title': 'Foo'}]}}
+
+    """
     raise _exc.FastbillResponseError("Error in %s: %r" % (method, json_resp),
-                                     json_resp)
+                                     error_list)
 
 
 def _abort_http(method, http_resp):
     """
     >>> class FakeResp(object):
-    ...      content = ''
+    ...      content = 'Wohoo!'
     ...      headers = {'foo': 'bar'}
     ...      status_code = 200
     ...      reason = 'OK'
 
     >>> _abort_http("foo.get", FakeResp())
+    Traceback (most recent call last):
+    ...
+    FastbillResponseError: POST foo.get 200 OK
+    Headers:
+    { 'foo': 'bar'}
+    Content:
+    'Wohoo!'
+    Summary: POST foo.get 200 OK
+
     """
     exc_template = """POST {method} {0.status_code} {0.reason}
 Headers:
@@ -193,4 +212,4 @@ Summary: POST {method} {0.status_code} {0.reason}"""
         method=method,
         headers=headers,
     )
-    raise _exc.FastbillResponseError(message)
+    raise _exc.FastbillResponseError(message, http_resp)

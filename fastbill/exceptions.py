@@ -15,10 +15,12 @@ class FastbillHttpError(FastbillError):
 class FastbillResponseError(FastbillHttpError):
     """Raised if Fastbill reports errors in the response."""
 
-    def __init__(self, message, json_response):
+    def __init__(self, message, json_response, errors=None):
         super(FastbillResponseError, self).__init__(message)
         self.json_response = json_response
-        self.errors = json_response['RESPONSE'].get('ERRORS', [])
+        if errors is None:
+            errors = []
+        self.errors = errors
 
     @property
     def broken_fields(self):
