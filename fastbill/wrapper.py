@@ -192,7 +192,7 @@ def _abort_http(method, http_resp):
     ...
     FastbillResponseError: POST foo.get 200 OK
     Headers:
-    { 'foo': 'bar'}
+    {'foo': 'bar'}
     Content:
     'Wohoo!'
     Summary: POST foo.get 200 OK
@@ -205,7 +205,7 @@ Content:
 {0.content!r}
 Summary: POST {method} {0.status_code} {0.reason}"""
 
-    headers = _pp.pformat(dict(http_resp.headers), indent=2)
+    headers = _pp.pformat(dict(http_resp.headers))
 
     message = exc_template.format(
         http_resp,
