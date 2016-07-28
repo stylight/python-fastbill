@@ -14,6 +14,13 @@ Super thin Python wrapper for Fastbill's HTTP API developed by `STYLIGHT <http:/
 Latest release:
 ---------------
 
+`fastbill 0.7.3  <https://pypi.python.org/pypi/fastbill/>`_
+
+ * Bugfix release. In the case of an successful HTTP response without a valid
+   JSON structure the wrapper would crash.
+ * Tests which would catch this bug were not run due to test misconfiguration.
+   This is fixed as well.
+
 `fastbill 0.7.2  <https://pypi.python.org/pypi/fastbill/>`_
 
  * Add configurable timeout to all API calls. The default timeout is 1 minute.

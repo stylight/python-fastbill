@@ -16,7 +16,7 @@ except IOError:
 
 setup(
     name='fastbill',
-    version="0.7.2",  # Don't forget to update fastbill.version too
+    version="0.7.3",  # Don't forget to update fastbill.version too
     description='A thin python wrapper for the fastbill API',
     long_description=long_description,
     author='python-fastbill contributors',

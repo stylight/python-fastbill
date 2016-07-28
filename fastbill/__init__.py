@@ -17,12 +17,12 @@ What it specifically doesn't do:
  * Verify the data coming back is what you expect.
  * Convert types. (Especially not dates or times)
 
-:copyright: (c) 2013,2014,2015 Stylight GmbH
+:copyright: (c) 2013,2014,2015,2016 Stylight GmbH
 :licence: MIT, see LICENSE for more details.
 
 """
 
-__version__ = '0.7.2'
+__version__ = '0.7.3'
 __author__ = 'python-fastbill contributors'
 
 from .wrapper import FastbillWrapper
